@@ -19,6 +19,7 @@
     "encrypt_boot": "false",
     "ami_description": "Amazon Linux2 base image"
   }],
+
   "provisioners": [
     {
       "type": "shell",
