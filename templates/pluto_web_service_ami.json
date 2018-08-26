@@ -1,0 +1,63 @@
+{
+  "builders": [{
+    "type": "amazon-ebs",
+    "source_ami": "{{user `source_ami`}}",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "{{user `region`}}",
+    "ssh_keypair_name": "{{user `ssh_keypair_name`}}",
+    "ssh_private_key_file": "{{user `ssh_private_key_file`}}",
+    "ssh_username": "pluto",
+    "ssh_timeout": "3m",
+    "instance_type": "t2.micro",
+    "tags": {
+      "Name": "pluto-ami-platform-{{isotime \"20060102\"}}",
+      "owner": "myungho"
+    },
+    "ami_name": "pluto-web-service-java8-platform-{{timestamp}}",
+    "user_data_file": "./defaults.cfg",
+    "encrypt_boot": "false",
+    "ami_description": "Amazon Linux2 base image"
+  }],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [ "sleep 10; mkdir /tmp/deploy; mkdir /tmp/deploy/conf;" ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "sudo bash -c '{{.Path}}'",
+      "inline": [
+        "yum update -y",
+        "yum install -y gcc gcc-c++",
+        "yum install -y docker",
+        "yum install -y unzip",
+        "yum install -y java-1.8.0-openjdk",
+        "easy_install pip",
+        "pip install docker-py requests PyYAML boto3"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "provisioners/conf/thp/disable-transparent-hugepages",
+      "destination": "/tmp/deploy/conf/disable-transparent-hugepages"
+    },
+    {
+      "type": "file",
+      "source": "provisioners/conf/docker/docker",
+      "destination": "/tmp/deploy/conf/docker"
+    },
+    {
+      "type": "shell",
+      "execute_command": "sudo bash -c '{{.Path}}'",
+      "scripts": [
+        "provisioners/shell/user_create_platform.sh",
+        "provisioners/shell/pluto_dir_setup.sh",
+        "provisioners/shell/kernel_setup.sh",
+        "provisioners/shell/codedeploy_agent_install.sh",
+        "provisioners/shell/xray_agent_install.sh",
+        "provisioners/shell/cloud_watch_agent_install.sh"
+      ]
+    }
+  ]
+}

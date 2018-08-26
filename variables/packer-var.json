@@ -1,0 +1,10 @@
+{
+  "aws_access_key": "",
+  "aws_secret_key": "",
+  "source_ami": "ami-b70554c8",
+  "region": "us-east-1",
+  "vpc_id": "vpc-92c405e8",
+  "subnet_id": "subnet-c4a617a3",
+  "ssh_keypair_name": "",
+  "ssh_private_key_file": ""
+}
