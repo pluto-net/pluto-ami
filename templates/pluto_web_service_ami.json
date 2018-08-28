@@ -15,7 +15,7 @@
       "owner": "myungho"
     },
     "ami_name": "pluto-web-service-java8-platform-{{timestamp}}",
-    "user_data_file": "./defaults.cfg",
+    "user_data_file": "provisioners/conf/cloudconfig/defaults.cfg",
     "encrypt_boot": "false",
     "ami_description": "Amazon Linux2 base image"
   }],
@@ -25,6 +25,17 @@
       "type": "shell",
       "inline": [ "sleep 10; mkdir /tmp/deploy; mkdir /tmp/deploy/conf;" ]
     },
+    {
+      "type": "file",
+      "source": "provisioners/conf/cloudconfig/defaults.cfg",
+      "destination": "/tmp/defaults.cfg"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo mv /tmp/defaults.cfg /etc/cloud/cloud.cfg.d/defaults.cfg"
+      ]
+    }
     {
       "type": "shell",
       "execute_command": "sudo bash -c '{{.Path}}'",
